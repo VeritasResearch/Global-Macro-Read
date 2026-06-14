@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Global Macro Pulse — Veritas Research Team</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bg: #F7F6F3;
+    --white: #FFFFFF;
+    --ink: #1A1A1A;
+    --ink-2: #3D3D3D;
+    --ink-3: #6B6B6B;
+    --ink-4: #9A9A9A;
+    --rule: #DDDBD6;
+    --rule-heavy: #B8B5AE;
+    --blue: #1A3A6B;
+    --blue-light: #E8EDF5;
+    --green: #1A5C3A;
+    --green-light: #E8F2EC;
+    --red: #8B1A1A;
+    --red-light: #F5E8E8;
+    --amber: #7A5C1A;
+    --amber-light: #F5EFE0;
+    --accent: #1A3A6B;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 48px 32px 72px;
+  }
+
+  /* ── REPORT HEADER ── */
+  .report-header {
+    border-top: 3px solid var(--ink);
+    border-bottom: 1px solid var(--rule-heavy);
+    padding: 18px 0 14px;
+    margin-bottom: 32px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+  .report-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+  .report-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .report-meta {
+    text-align: right;
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.8;
+  }
+  .report-meta strong {
+    display: block;
+    font-size: 12px;
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+
+  /* ── VERDICT STRIP ── */
+  .verdict {
+    background: var(--blue);
+    color: #fff;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    gap: 16px;
+  }
+  .verdict-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 3px;
+  }
+  .verdict-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .verdict-badge {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 5px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    color: #fff;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .section-head h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .section-head::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* ── INDICATOR GRID ── */
+  .ind-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-bottom: 32px;
+  }
+  @media(max-width: 480px){ .ind-grid { grid-template-columns: 1fr; } }
+  .ind-cell {
+    background: var(--white);
+    padding: 16px 18px;
+  }
+  .ind-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    margin-bottom: 8px;
+  }
+  .ind-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .ind-value.up { color: var(--green); }
+  .ind-value.down { color: var(--red); }
+  .ind-value.neu { color: var(--amber); }
+  .ind-delta {
+    font-size: 11px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .ind-delta.up { color: var(--green); }
+  .ind-delta.down { color: var(--red); }
+  .ind-delta.neu { color: var(--amber); }
+  .ind-note {
+    font-size: 10.5px;
+    color: var(--ink-4);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ── CHART SECTION ── */
+  .chart-wrap {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    padding: 20px 18px 12px;
+    margin-bottom: 32px;
+  }
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .chart-title-block h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .chart-title-block p {
+    font-size: 11px;
+    color: var(--ink-3);
+  }
+  .chart-legend {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .leg-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+  }
+  .leg-dot { width: 10px; height: 2px; border-radius: 1px; }
+
+  svg.chart { display: block; width: 100%; height: auto; overflow: visible; }
+  .cg { stroke: #EBEBEB; stroke-width: 1; }
+  .ax { fill: #9A9A9A; font-size: 9px; font-family: 'IBM Plex Mono', monospace; }
+  .l-blue { fill: none; stroke: #1A3A6B; stroke-width: 2; }
+  .l-green { fill: none; stroke: #1A5C3A; stroke-width: 2; }
+  .l-amber { fill: none; stroke: #C4860A; stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .pullback-zone { fill: rgba(26,92,58,0.06); }
+  .pullback-label { fill: #1A5C3A; font-size: 9px; font-family: 'IBM Plex Mono', monospace; }
+  .peak-dot { fill: #8B1A1A; }
+  .peak-label { fill: #8B1A1A; font-size: 9px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* ── ANALYSIS TEXT ── */
+  .analysis-wrap {
+    margin-bottom: 32px;
+  }
+  .analysis-body {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    padding: 22px 22px 20px;
+  }
+  .analysis-body p {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.75;
+    margin-bottom: 14px;
+  }
+  .analysis-body p:last-child { margin-bottom: 0; }
+  .analysis-body strong { color: var(--ink); font-weight: 600; }
+  .analysis-body em { font-style: italic; color: var(--ink-3); }
+  .analysis-body .caveat {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    line-height: 1.65;
+  }
+  .analysis-body .caveat strong { color: var(--ink-2); }
+
+  /* ── TAGS ── */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border: 1px solid;
+  }
+  .tag.blue { color: var(--blue); border-color: var(--blue); background: var(--blue-light); }
+  .tag.green { color: var(--green); border-color: var(--green); background: var(--green-light); }
+  .tag.amber { color: var(--amber); border-color: var(--amber); background: var(--amber-light); }
+  .tag.red { color: var(--red); border-color: var(--red); background: var(--red-light); }
+
+  /* ── FOOTNOTE / FOOTER ── */
+  .report-footer {
+    border-top: 1px solid var(--rule-heavy);
+    padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 10.5px;
+    color: var(--ink-4);
+  }
+  .report-footer a { color: var(--ink-4); text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- REPORT HEADER -->
+  <div class="report-header">
+    <div>
+      <div class="report-label">Veritas Research Team · Weekly Macro Note</div>
+      <div class="report-title">Global Macro Pulse</div>
+    </div>
+    <div class="report-meta">
+      <strong>13 June 2026</strong>
+      Week of 9–13 Jun 2026<br/>
+      Fixed Income · FX · Risk Appetite
+    </div>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict">
+    <div>
+      <div class="verdict-label">Weekly Regime</div>
+      <div class="verdict-text">Risk-On — triggered by US10Y pullback + DXY weakness</div>
+    </div>
+    <div class="verdict-badge">TACTICAL · SHORT-TERM</div>
+  </div>
+
+  <!-- INDICATORS -->
+  <div class="section-head"><h2>Key Indicators</h2></div>
+  <div class="ind-grid">
+    <div class="ind-cell">
+      <div class="ind-label">US 10Y Yield — Weekly</div>
+      <div class="ind-value down">▼ Pullback</div>
+      <div class="ind-delta down">↓ From YTD high ~4.68%</div>
+      <div class="ind-note">Yield turun = Treasuries less sold → capital rotate ke risk asset</div>
+    </div>
+    <div class="ind-cell">
+      <div class="ind-label">DXY — Dollar Index</div>
+      <div class="ind-value down">▼ ~100.8</div>
+      <div class="ind-delta down">↓ Pullback from weekly peak</div>
+      <div class="ind-note">Dollar melemah minggu ini = tailwind untuk risk asset global</div>
+    </div>
+    <div class="ind-cell">
+      <div class="ind-label">US 10Y YTD Trend</div>
+      <div class="ind-value neu">4.68%</div>
+      <div class="ind-delta neu">↑ +72 bps since Jan (3.96%)</div>
+      <div class="ind-note">Struktural masih uptrend — Higher for Longer intact</div>
+    </div>
+    <div class="ind-cell">
+      <div class="ind-label">Global Risk Appetite</div>
+      <div class="ind-value up">Risk-On</div>
+      <div class="ind-delta up">↑ Tactical, weekly basis</div>
+      <div class="ind-note">Didorong double tailwind: yield + DXY turun bersamaan</div>
+    </div>
+  </div>
+
+  <!-- CHART 1: US10Y -->
+  <div class="section-head"><h2>US 10Y Yield — Jan to Jun 2026</h2></div>
+  <div class="chart-wrap">
+    <div class="chart-header">
+      <div class="chart-title-block">
+        <h3>US Treasury 10-Year Yield</h3>
+        <p>Persistent uptrend YTD, weekly pullback dari peak di area 4.68%</p>
+      </div>
+      <div class="chart-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#1A3A6B;height:2px;width:16px;"></div> US 10Y</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#1A5C3A;height:2px;width:10px;display:inline-block;"></div> Pullback zone</div>
+      </div>
+    </div>
+    <svg class="chart" viewBox="0 0 680 200" preserveAspectRatio="xMidYMid meet">
+      <!-- grid -->
+      <line class="cg" x1="50" y1="20" x2="660" y2="20"/>
+      <line class="cg" x1="50" y1="65" x2="660" y2="65"/>
+      <line class="cg" x1="50" y1="110" x2="660" y2="110"/>
+      <line class="cg" x1="50" y1="155" x2="660" y2="155"/>
+      <!-- y labels: 4.8(20) 4.5(65) 4.2(110) 3.9(155) -->
+      <text class="ax" x="4" y="24">4.80</text>
+      <text class="ax" x="4" y="69">4.50</text>
+      <text class="ax" x="4" y="114">4.20</text>
+      <text class="ax" x="4" y="159">3.90</text>
+      <!-- pullback zone highlight (last ~2 weeks) -->
+      <rect class="pullback-zone" x="610" y="20" width="50" height="155"/>
+      <text class="pullback-label" x="613" y="16">pullback</text>
+      <!-- US10Y path: y = 155 - (val-3.9)/(4.8-3.9)*135
+           Jan 3.96→145, Feb 4.08→127, Mar low 3.96→145, Apr 4.37→81, May 4.32→88, Jun peak 4.68→28, weekly close pullback 4.45→60 -->
+      <path class="l-blue" d="M50,145 L130,127 L220,145 L310,81 L400,88 L500,88 L590,28 L635,28 L660,60"/>
+      <!-- peak dot -->
+      <circle class="peak-dot" cx="590" cy="28" r="4"/>
+      <text class="peak-label" x="556" y="20">Peak ~4.68%</text>
+      <!-- x labels -->
+      <text class="ax" x="46" y="180">Jan</text>
+      <text class="ax" x="126" y="180">Feb</text>
+      <text class="ax" x="216" y="180">Mar</text>
+      <text class="ax" x="306" y="180">Apr</text>
+      <text class="ax" x="396" y="180">May</text>
+      <text class="ax" x="486" y="180">Jun</text>
+      <text class="ax" x="626" y="180">Now</text>
+    </svg>
+  </div>
+
+  <!-- CHART 2: DXY -->
+  <div class="section-head"><h2>DXY (Dollar Index) — Jan to Jun 2026</h2></div>
+  <div class="chart-wrap">
+    <div class="chart-header">
+      <div class="chart-title-block">
+        <h3>US Dollar Index (DXY)</h3>
+        <p>Rally dari ~98 ke 100.8, kemudian pullback minggu ini — sinyal risk-on</p>
+      </div>
+      <div class="chart-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#1A3A6B;height:2px;width:16px;"></div> DXY</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#1A5C3A;height:2px;width:10px;display:inline-block;"></div> Risk-On zone</div>
+      </div>
+    </div>
+    <svg class="chart" viewBox="0 0 680 200" preserveAspectRatio="xMidYMid meet">
+      <!-- grid -->
+      <line class="cg" x1="50" y1="20" x2="660" y2="20"/>
+      <line class="cg" x1="50" y1="65" x2="660" y2="65"/>
+      <line class="cg" x1="50" y1="110" x2="660" y2="110"/>
+      <line class="cg" x1="50" y1="155" x2="660" y2="155"/>
+      <!-- y labels: 101.5(20) 100.5(65) 99.5(110) 98.5(155) -->
+      <text class="ax" x="4" y="24">101.5</text>
+      <text class="ax" x="4" y="69">100.5</text>
+      <text class="ax" x="4" y="114">99.5</text>
+      <text class="ax" x="4" y="159">98.0</text>
+      <!-- pullback zone -->
+      <rect class="pullback-zone" x="610" y="20" width="50" height="155"/>
+      <text class="pullback-label" x="612" y="16">risk-on</text>
+      <!-- DXY: y = 155-(val-98)/(101.5-98)*135
+           Jan 98→155, Feb 98→155, Mar 99.5→97, Apr 100.2→55, May 98.8→110, Jun peak 100.8→40, pullback 99.8→79 -->
+      <path class="l-blue" d="M50,155 L130,155 L220,97 L310,55 L400,110 L490,110 L590,40 L635,40 L660,79"/>
+      <circle class="peak-dot" cx="590" cy="40" r="4"/>
+      <text class="peak-label" x="556" y="32">Peak ~100.8</text>
+      <!-- x labels -->
+      <text class="ax" x="46" y="180">Jan</text>
+      <text class="ax" x="126" y="180">Feb</text>
+      <text class="ax" x="216" y="180">Mar</text>
+      <text class="ax" x="306" y="180">Apr</text>
+      <text class="ax" x="396" y="180">May</text>
+      <text class="ax" x="486" y="180">Jun</text>
+      <text class="ax" x="626" y="180">Now</text>
+    </svg>
+  </div>
+
+  <!-- ANALYSIS -->
+  <div class="section-head"><h2>Global Macro Read</h2></div>
+  <div class="analysis-wrap">
+    <div class="tag-row">
+      <span class="tag green">Risk-On (Weekly)</span>
+      <span class="tag blue">US10Y Pullback</span>
+      <span class="tag blue">DXY Weakness</span>
+      <span class="tag amber">HfL Structural</span>
+      <span class="tag amber">Watch: US Data</span>
+    </div>
+    <div class="analysis-body">
+      <p>Secara <em>year-to-date</em>, US 10Y yield sudah uptrend panjang — naik dari sekitar 3.96% di Januari hingga menyentuh area 4.68% menjelang akhir periode. Pergerakan ini mencerminkan pasar [...]
+
+      <p>Yang relevan untuk minggu ini adalah <strong>pullback jangka pendek dari peak tersebut</strong>. Ketika US10Y turun, tekanan jual di Treasuries mereda dan capital mulai mencari return di temp[...]
+
+      <p>Kombinasi ini adalah setup klasik: <strong>US10Y turun + DXY turun secara bersamaan = double tailwind untuk global risk appetite</strong>. Equity market global, credit spreads, dan komoditas [...]
+
+      <p class="caveat"><strong>Caveat:</strong> Ini adalah pergerakan taktis, bukan perubahan regime. Struktural, US10Y masih dalam uptrend YTD dan DXY masih di atas 100 secara keseluruhan. Jika data[...]
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="report-footer">
+    <span>Source: TradingEconomics · Data as of 13 June 2026</span>
+    <span>
+      <a href="https://veritasresearch.github.io/IHSG-13-06-26/">veritasresearch.github.io</a>
+      &nbsp;·&nbsp; Veritas Research Team
+    </span>
+  </div>
+
+</div>
+</body>
+</html>
